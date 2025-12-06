@@ -16,7 +16,7 @@ import Divider from '@mui/material/Divider';
 import Todo from './todo.jsx';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useContext } from 'react';
 import { TodoContext } from '../context/todoContext.js';
 
@@ -40,13 +40,24 @@ export default function Todolist() {
     setodos(parsedTodos);
   }, []); // تأكد من أن setodos لا تتسبب في loop، يفضل إبقاؤها فارغة هنا
 
-  const ACTHVEDtodoTypes = todos.filter((t) => {
-    return t.isComplete
-  })
+  const ACTHVEDtodoTypes = useMemo(() => {
+    return todos.filter((t) => {
+      console.log("Calling Complated Tasks")
+      return t.isComplete
+    });
+  }, [todos])
 
-  const CANELEDDtodoTypes = todos.filter((t) => {
+
+  const CANELEDDtodoTypes = useMemo( () => { 
+     return todos.filter((t) => {
+
+    console.log("Calling NONComplated Tasks")
+
     return !t.isComplete
-  })
+   }) 
+  } , [todos])
+
+
 
   let filtertodo = todos;
   if (todoTypes == "COMPLATED") {
@@ -90,7 +101,7 @@ export default function Todolist() {
 
   return (
     <Container maxWidth="sm" background="#cb2121ff">
-      <Card sx={{ minWidth: 275 }} style={{maxHeight:"80vh", overflow:"scroll" }}>
+      <Card sx={{ minWidth: 275 }} style={{ maxHeight: "80vh", overflow: "scroll" }}>
         <CardContent>
           <Typography variant='h2' >
             My Tasks
@@ -135,8 +146,8 @@ export default function Todolist() {
                 onClick={() => {
                   handleAddTask()
 
-                }  }
-                disabled ={title.length ==0} >Add </Button>
+                }}
+                disabled={title.length == 0} >Add </Button>
             </Grid>
 
           </Grid>
